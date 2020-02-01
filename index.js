@@ -1,18 +1,16 @@
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
-const server = http.createServer((req, res) => {
+const { checkResponse } = require('./config-methods');
+
+const server = http.createServer( (req, res) => {
     if (req.method === 'GET') {
         res.writeHead(200, {
-            'Content-Type' : 'text/html'
+            'Content-Type' : 'text/html; charset=utf-8'
         });
 
-        res.end(`
-        <h1>Hello from NodeJS</h1>
-        <form method="POST" action="/">
-            <input name="title" type="text" />
-            <button type="submit">Send</button>
-        </form>
-        `);
+        checkResponse(req.url, res);
 
     } else if (req.method === 'POST') {
         const body = [];
@@ -22,16 +20,16 @@ const server = http.createServer((req, res) => {
         });
 
         req.on('data', data => {
-            body.push(Buffer.from( ));
+            body.push(Buffer.from( data ));
         });
 
         req.on('end', () => {
             const message = body.toString().split('=')[1];
-
+            
             res.end(`
                 <h1>Your message/Ваше сообщение</h1>
                 <p>${message}</p>
-            `);
+            `, 'utf-8');
         });
     }
 });
